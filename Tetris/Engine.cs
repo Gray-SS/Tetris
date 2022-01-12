@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tetris
 {
@@ -16,6 +17,8 @@ namespace Tetris
         public Viewport Viewport { get; private set; }
         public int ConsoleWidth { get; private set; }
         public int ConsoleHeight { get; private set; }
+        public int AspectRatio { get; private set; } = 2;
+        public int FPS { get; private set; }
 
         private Thread _updateThread;
         private Thread _renderThread;
@@ -68,6 +71,17 @@ namespace Tetris
 
         private void Render()
         {
+            int _framesCount = 0;
+            Task.Run(() =>
+            {
+                while (_renderThread.IsAlive)
+                {
+                    Thread.Sleep(1000);
+                    FPS = _framesCount;
+                    _framesCount = 0;
+                }
+            });
+
             while (_renderThread.IsAlive)
             {
                 Console.CursorVisible = false;
@@ -77,6 +91,7 @@ namespace Tetris
                 Graphics.Render();
 
                 Thread.Sleep(1);
+                _framesCount++;
             }
         }
     }

@@ -87,15 +87,14 @@ namespace Tetris
             var vp = _engine.Viewport;
             int c = 0;
             CharInfo[] _charInfo = new CharInfo[vp.Width * vp.Height];
-            for (int j = 0; j < vp.Height; j++)
+            for (int j = 0; j < _map.GetLength(1); j++)
             {
-                for (int i = 0; i < vp.Width; i++)
+                for (int i = 0; i < _map.GetLength(0); i++)
                 {
                     var v = _map[i, j];
-                    _charInfo[c] = new CharInfo() { Attributes = (short)((int)v.Color | ((int)v.BackgroundColor) << 4), Char = new CharUnion() { AsciiChar = (byte)v.Char, UnicodeChar = v.Char} };
+                    _charInfo[c] = new CharInfo() { Attributes = (short)((int)v.Color | ((int)v.BackgroundColor) << 4), Char = new CharUnion() { AsciiChar = (byte)v.Char, UnicodeChar = v.Char } };
                     c++;
                 }
-
             }
 
             _buffer.SetBuffer(_charInfo);

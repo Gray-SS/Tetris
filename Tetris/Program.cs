@@ -13,21 +13,12 @@ namespace Tetris
 
     public class TetrisEngine : Engine
     {
-        private Texture _texture;
         private Rectangle _tetrisViewport;
 
         public TetrisEngine() : base() { }
 
         public override void Load()
         {
-            _texture = new Texture(4, 3);
-            _texture.SetData(new BufferValue[]
-            {
-                new(null, null, CColor.White), new(null, null, CColor.White), new(null, null, null), new(null, null, null),
-                new(null, null, CColor.White), new(null, null, CColor.White),  new(null, null, null), new(null, null, null),
-                new(null, null, CColor.White), new(null, null, CColor.White), new(null, null, CColor.White), new(null, null, CColor.White)
-            });
-
             _tetrisViewport = new Rectangle(2, 1, ConsoleWidth / 4, ConsoleHeight - 2);
         }
 
@@ -38,9 +29,16 @@ namespace Tetris
 
         public override void Draw()
         {
-            Graphics.Clear(CColor.DarkRed);
+            Graphics.Clear(CColor.Black);
 
-            Graphics.DrawTexture(1, 1, _texture);
+            Graphics.DrawRectangle(1, 0, 20, 1, null, null, CColor.DarkGray);
+            Graphics.DrawRectangle(0, 0, 2, ConsoleHeight, null, null, CColor.DarkGray);
+            Graphics.DrawRectangle(1, ConsoleHeight - 1, 20, 1, null, null, CColor.DarkGray);
+            Graphics.DrawRectangle(21, 0, 2, ConsoleHeight, null, null, CColor.DarkGray);
+
+            Graphics.DrawText(ConsoleWidth - 20, 1, $"FPS: {FPS}", CColor.Red, null);
+            Graphics.DrawText(ConsoleWidth - 20, 2, $"Console Width: {ConsoleWidth}", CColor.Green, null);
+            Graphics.DrawText(ConsoleWidth - 20, 3, $"Console Height: {ConsoleHeight}", CColor.Blue, null);
         }
     }
 }
