@@ -5,7 +5,7 @@ namespace Tetris
     public class Graphics
     {
         private Engine _engine;
-        private BufferValue[,] _map;
+        private Glyph[,] _map;
         private Buffer _buffer;
 
         public Graphics(Engine engine)
@@ -13,7 +13,7 @@ namespace Tetris
             _engine = engine;
 
             var vp = _engine.Viewport;
-            _map = new BufferValue[vp.Width, vp.Height];
+            _map = new Glyph[vp.Width, vp.Height];
             _buffer = new Buffer(vp.X, vp.Y, vp.Width, vp.Height);
         }
 
@@ -53,8 +53,8 @@ namespace Tetris
             }
         }
 
-        private void SetPixel(int x, int y, char? c, CColor? color, CColor? backgroundColor) => SetPixel(x, y, new BufferValue(c, color, backgroundColor));
-        private void SetPixel(int x, int y, BufferValue value)
+        private void SetPixel(int x, int y, char? c, CColor? color, CColor? backgroundColor) => SetPixel(x, y, new Glyph(c, color, backgroundColor));
+        private void SetPixel(int x, int y, Glyph value)
         {
             if (x < 0 || x >= _map.GetLength(0) || y < 0 || y >= _map.GetLength(1))
                 return;
@@ -70,8 +70,8 @@ namespace Tetris
 
         public void Clear() => Clear(null, null, CColor.White);
         public void Clear(CColor? backgroundColor) => Clear(null, null, backgroundColor);
-        public void Clear(char? c, CColor? color, CColor? backgroundColor) => Clear(new BufferValue(c, color, backgroundColor));
-        public void Clear(BufferValue value)
+        public void Clear(char? c, CColor? color, CColor? backgroundColor) => Clear(new Glyph(c, color, backgroundColor));
+        public void Clear(Glyph value)
         {
             for (int i = 0; i < _map.GetLength(0); i++)
             {

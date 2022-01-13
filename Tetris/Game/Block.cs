@@ -47,13 +47,5 @@ namespace Tetris.Game
             rotationState = 0;
             _offset = StartOffset;
         }
-
-        public void Draw(Graphics g)
-        {
-            foreach(var tile in TilesPosition())
-            {
-                g.DrawRectangle(tile.X, tile.Y, 1, 1, null, null, (CColor)Id);
-            }
-        }
     }
 }

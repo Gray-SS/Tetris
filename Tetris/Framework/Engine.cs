@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Tetris.Framework.Helper;
 
 namespace Tetris
 {
@@ -20,16 +21,23 @@ namespace Tetris
         public int AspectRatio { get; private set; } = 2;
         public int FPS { get; private set; }
 
+        private readonly IntPtr stdInputHandle = NativeMethods.GetStdHandle(-10);
+        private readonly IntPtr stdOutputHandle = NativeMethods.GetStdHandle(-11);
+
         private Thread _updateThread;
         private Thread _renderThread;
 
         public Engine()
         {
             this.Title = Assembly.GetExecutingAssembly().GetName().Name;
-            this.Viewport = new Viewport(0, 0, Console.WindowWidth, Console.WindowHeight);
-            this.Graphics = new Graphics(this);
             this.ConsoleWidth = Console.WindowWidth;
-            this.ConsoleHeight = Console.WindowHeight;
+            this.ConsoleHeight = Console.WindowHeight * 2;
+            this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
+            this.Graphics = new Graphics(this);
+
+            NativeMethods.SetConsoleMode(stdInputHandle, 0x0080);
+
+            ConsoleFont.SetFont(stdOutputHandle, 10, 10);
 
             _updateThread = new Thread(Update);
             _renderThread = new Thread(Render);
@@ -96,13 +104,13 @@ namespace Tetris
         }
     }
 
-    public struct BufferValue
+    public struct Glyph
     {
         public char Char { get; set; }
         public CColor Color { get; set; }
         public CColor BackgroundColor { get; set; }
 
-        public BufferValue(char? c, CColor? color, CColor? backgroundColor)
+        public Glyph(char? c, CColor? color, CColor? backgroundColor)
         {
             this.Char = c ?? ' ';
             this.Color = color ?? CColor.Transparent;

@@ -1,9 +1,13 @@
-﻿namespace Tetris.Game
+﻿using System;
+
+namespace Tetris.Game
 {
     public class GameGrid
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
+
+        public event Action<int> OnRowCleared;
 
         private readonly int[,] _grid;
 
@@ -73,6 +77,7 @@
             {
                 if (IsRowFull(y))
                 {
+                    OnRowCleared.Invoke(y);
                     ClearRow(y);
                     cleared++;
                 }

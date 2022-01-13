@@ -7,16 +7,16 @@ namespace Tetris
         public int Width { get; set; }
         public int Height { get; set; }
 
-        private BufferValue[] _data;
+        private Glyph[] _data;
 
         public Texture(int width, int height)
         {
             this.Width = width;
             this.Height = height;
-            _data = new BufferValue[width * height];
+            _data = new Glyph[width * height];
         }
 
-        public void SetData(BufferValue[] data)
+        public void SetData(Glyph[] data)
         {
             if (data.Length != Width * Height)
                 throw new Exception();
@@ -24,7 +24,7 @@ namespace Tetris
             _data = data;
         }
 
-        public BufferValue[] GetData()
+        public Glyph[] GetData()
         {
             return _data;
         }
