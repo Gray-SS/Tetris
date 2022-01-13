@@ -39,9 +39,9 @@ namespace Tetris
         {
             this.ApplyChanges();
 
+            this.Load();
             _updateThread.Start();
             _renderThread.Start();
-            this.Load();
         }
 
         public void ApplyChanges()
