@@ -4,7 +4,8 @@ namespace Tetris.Framework
 {
     public enum Keys
     {
-        A = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+        A = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+        Enter = 13,
     }
 
     public static class Keyboard

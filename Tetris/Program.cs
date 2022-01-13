@@ -9,6 +9,7 @@ namespace Tetris
         static void Main(string[] args)
         {
             TetrisEngine engine = new TetrisEngine();
+            engine.Construct(60, 30, 16, 16);
             engine.Run();
         }
     }

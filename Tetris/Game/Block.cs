@@ -17,12 +17,24 @@ namespace Tetris.Game
             _offset = StartOffset;
         }
 
+        public IEnumerable<Vector2> GetLocalTiles()
+        {
+            foreach (var pos in Tiles[rotationState])
+                yield return pos;
+        }
         public IEnumerable<Vector2> TilesPosition()
         {
             foreach(var pos in Tiles[rotationState])
             {
                 yield return pos + _offset;
             }
+        }
+
+        public int GetWidth()
+        {
+            int c = 0;
+            foreach(var tile in Tiles[rotationState]) { c++; }
+            return c;
         }
 
         public void RotateCW()

@@ -14,6 +14,7 @@ namespace Tetris
             get => Console.Title;
             set => Console.Title = value;
         }
+
         public Graphics Graphics { get; private set; }
         public Viewport Viewport { get; private set; }
         public int ConsoleWidth { get; private set; }
@@ -33,7 +34,6 @@ namespace Tetris
             this.ConsoleWidth = Console.WindowWidth;
             this.ConsoleHeight = Console.WindowHeight * 2;
             this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
-            this.Graphics = new Graphics(this);
 
             NativeMethods.SetConsoleMode(stdInputHandle, 0x0080);
 
@@ -41,6 +41,16 @@ namespace Tetris
 
             _updateThread = new Thread(Update);
             _renderThread = new Thread(Render);
+        }
+
+        public void Construct(int bufferWidth, int bufferHeight, int fontWidth, int fontHeight)
+        {
+            this.ConsoleWidth = bufferWidth;
+            this.ConsoleHeight = bufferHeight;
+
+            this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
+            this.Graphics = new Graphics(this);
+            ConsoleFont.SetFont(stdOutputHandle, (short)fontWidth, (short)fontHeight);
         }
 
         public void Run()
@@ -57,6 +67,8 @@ namespace Tetris
             Console.WindowWidth = this.ConsoleWidth;
             Console.WindowHeight = this.ConsoleHeight;
             Console.SetBufferSize(ConsoleWidth, ConsoleHeight);
+
+            this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
         }
 
         public virtual void Load() { }

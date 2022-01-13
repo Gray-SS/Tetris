@@ -52,6 +52,17 @@ namespace Tetris.Game
             return true;
         }
 
+        public void Clear()
+        {
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    _grid[i, j] = 0;
+                }
+            }
+        }
+
         public void ClearRow(int y)
         {
             for (int x = 0; x < Width; x++)

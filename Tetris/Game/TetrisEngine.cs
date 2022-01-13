@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using Tetris.Framework;
 using Tetris.Game.Blocks;
@@ -7,18 +9,33 @@ namespace Tetris.Game
 {
     public class TetrisEngine : Engine
     {
+        private int _gameState = 0;
+
+        #region State 0
         private int _score = 0;
         private int _highScore = 0;
         private Rectangle _tetrisViewport;
         private GameGrid _gameGrid;
         private Block currentBlock;
         private BlockQueue _blockQueue;
-        private bool _gameOver = false;
+        #endregion
+
+        #region State 1
+        private string[] _gameOverMenuTexts;
+        private int _currentSelection;
+        #endregion
 
         public TetrisEngine() : base() { }
 
         public override void Load()
         {
+            _gameOverMenuTexts = new string[]
+            {
+                "Restart",
+                "Menu",
+                "Exit"
+            };
+
             _tetrisViewport = new Rectangle(4, ConsoleHeight / 2 - 22 / 2, 10, 22);
             _gameGrid = new GameGrid(_tetrisViewport.Width, _tetrisViewport.Height);
             _gameGrid.OnRowCleared += (y) =>
@@ -45,9 +62,10 @@ namespace Tetris.Game
         {
             _inputTimer += dt;
 
-            if (!_gameOver)
+            if (_gameState == 0)
             {
                 _timer += dt;
+
                 if (_timer >= 0.5f)
                 {
                     _timer = 0f;
@@ -60,25 +78,86 @@ namespace Tetris.Game
                 if (Keyboard.IsKeyDown(Keys.S) && _inputTimer >= _inputDelay) { _inputTimer = 0f; MoveDown(currentBlock); }
                 if (Keyboard.IsKeyDown(Keys.R) && _inputTimer >= _inputDelay * 1.5f) { _inputTimer = 0f; Rotate(currentBlock); }
             }
+            else if (_gameState == 1)
+            {
+                if (Keyboard.IsKeyDown(Keys.Z) && _inputTimer >= _inputDelay * 2f)
+                {
+                    _inputTimer = 0f;
+                    if (_currentSelection == 0) _currentSelection = _gameOverMenuTexts.Length - 1;
+                    else _currentSelection -= 1;
+                }
+                if (Keyboard.IsKeyDown(Keys.S) && _inputTimer >= _inputDelay * 2f)
+                {
+                    _inputTimer = 0f;
+                    _currentSelection = (_currentSelection + 1) % _gameOverMenuTexts.Length;
+                }
+
+                if (Keyboard.IsKeyDown(Keys.Enter) && _inputTimer >= _inputDelay * 2f)
+                {
+                    _inputTimer = 0f;
+                    switch (_currentSelection)
+                    {
+                        case 0:
+                            Reset();
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            Process.GetCurrentProcess().Kill();
+                            break;
+                    }
+                }
+            }
         }
 
         public override void Draw()
         {
             Graphics.Clear(CColor.Black);
+            Graphics.DrawText(ConsoleWidth - 15, 1, $"FPS: {FPS}", CColor.Red, null);
 
-            Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Y, _tetrisViewport.Width + 2, 1, null, null, CColor.DarkGray); //TOP BORDER
-            Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Height + 1 + _tetrisViewport.Y, _tetrisViewport.Width + 2, 1, null, null, CColor.DarkGray); //BOTTOM BORDER 
-            Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Y, 1, _tetrisViewport.Height + 2, null, null, CColor.DarkGray); //LEFT BORDER
-            Graphics.DrawRectangle(_tetrisViewport.Width + 1 + _tetrisViewport.X, _tetrisViewport.Y, 1, _tetrisViewport.Height + 2, null, null, CColor.DarkGray); //RIGHT BORDER
+            if (_gameState == 0)
+            {
+                Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Y, _tetrisViewport.Width + 2, 1, null, null, CColor.DarkGray); //TOP BORDER
+                Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Height + 1 + _tetrisViewport.Y, _tetrisViewport.Width + 2, 1, null, null, CColor.DarkGray); //BOTTOM BORDER 
+                Graphics.DrawRectangle(_tetrisViewport.X, _tetrisViewport.Y, 1, _tetrisViewport.Height + 2, null, null, CColor.DarkGray); //LEFT BORDER
+                Graphics.DrawRectangle(_tetrisViewport.Width + 1 + _tetrisViewport.X, _tetrisViewport.Y, 1, _tetrisViewport.Height + 2, null, null, CColor.DarkGray); //RIGHT BORDER
 
-            DrawBlock(currentBlock);
-            DrawGameGrid(_gameGrid);
+                DrawBlock(currentBlock);
+                DrawGameGrid(_gameGrid);
 
-            Graphics.DrawText(ConsoleWidth - 20, 1, $"FPS: {FPS}", CColor.Red, null);
-            Graphics.DrawText(ConsoleWidth - 20, 2, $"Console Width: {ConsoleWidth}", CColor.Green, null);
-            Graphics.DrawText(ConsoleWidth - 20, 3, $"Console Height: {ConsoleHeight}", CColor.Blue, null);
-            Graphics.DrawText(_tetrisViewport.Right + 5, 4, $"Score: {_score}", CColor.Yellow, null);
-            if (_gameOver) Graphics.DrawText(_tetrisViewport.Right + 6, 5, $"Game Over !", CColor.Red, null);
+                Graphics.DrawText(_tetrisViewport.Right + 5, 6, $"Score: {_score}", CColor.Yellow, null);
+                Graphics.DrawText(_tetrisViewport.Right + 5, 8, "Next Block:", CColor.Magenta, null);
+
+                DrawBlock(_blockQueue.NextBlock, new Vector2(_tetrisViewport.Right + 11 - _blockQueue.NextBlock.GetWidth() / 2, 10));
+            }
+            else if (_gameState == 1)
+            {
+                Graphics.DrawText(ConsoleWidth / 2 - "Game Over !".Length / 2, 6, "Game Over !", CColor.Red, null);
+                Graphics.DrawText(ConsoleWidth / 2 - $"Highscore: {_highScore}".Length / 2, 8, $"Highscore: {_highScore}", CColor.Green, null);
+
+                for (int i = 0; i < _gameOverMenuTexts.Length; i++)
+                {
+                    int x = ConsoleWidth / 2 - _gameOverMenuTexts[i].Length / 2;
+                    int y = ConsoleHeight / 2 + (_gameOverMenuTexts.Length * i - _gameOverMenuTexts.Length / 2);
+                    Graphics.DrawText(x, y, _gameOverMenuTexts[i], CColor.White, null);
+
+                    if (i == _currentSelection)
+                    {
+                        Graphics.DrawRectangle(x - 2, y, 1, 1, 'c', CColor.Yellow, null);
+                    }
+                }
+            }
+        }
+
+        private void Reset()
+        {
+            _gameState = 0;
+            _score = 0;
+
+            _gameGrid.Clear();
+
+            currentBlock = _blockQueue.GetBlock();
+            ResetBlock(currentBlock);
         }
 
         private void Rotate(Block block)
@@ -135,9 +214,11 @@ namespace Tetris.Game
 
             if (!_gameGrid.IsRowEmpty(1) && !_gameGrid.IsRowEmpty(2))
             {
-                _gameOver = true;
+                _gameState = 1;
                 if (_score > _highScore)
                     _highScore = _score;
+
+                _score = 0;
             }
 
             _score += 10;
@@ -153,6 +234,14 @@ namespace Tetris.Game
                     return false;
             }
             return true;
+        }
+
+        private void DrawBlock(Block block, Vector2 pos)
+        {
+            foreach(var tile in block.GetLocalTiles())
+            {
+                Graphics.DrawRectangle(tile.X + pos.X, tile.Y + pos.Y, 1, 1, null, null, (CColor)block.Id);
+            }
         }
 
         private void DrawBlock(Block block)
