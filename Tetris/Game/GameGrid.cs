@@ -23,6 +23,7 @@ namespace Tetris.Game
         {
             return x >= 0 && x < Width && y >= 0 && y < Height;
         }
+
         public bool IsEmpty(int x, int y)
         {
             if (!IsInside(x, y))

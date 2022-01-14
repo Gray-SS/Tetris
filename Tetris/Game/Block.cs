@@ -30,6 +30,8 @@ namespace Tetris.Game
             }
         }
 
+        public Vector2 Offset => _offset;
+
         public int GetWidth()
         {
             int c = 0;

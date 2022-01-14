@@ -6,16 +6,16 @@ namespace Tetris.Game
     public class BlockQueue
     {
         private readonly Block[] _blocks = new Block[]
-            {
-                new IBlock(),
-                new JBlock(),
-                new LBlock(),
-                new OBlock(),
-                new SBlock(),
-                new TBlock(),
-                new ZBlock()
-            };
-        private readonly Random random = new Random();
+        {
+            new IBlock(),
+            new JBlock(),
+            new LBlock(),
+            new OBlock(),
+            new SBlock(),
+            new TBlock(),
+            new ZBlock()
+        };
+        private readonly Random random = new();
 
         public Block NextBlock { get; private set; }
 
