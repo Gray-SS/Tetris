@@ -1,4 +1,4 @@
-﻿namespace Tetris.Framework
+﻿namespace ConsoleEngine
 {
     public struct Vector2
     {

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Tetris.Framework.Helper
+namespace ConsoleEngine.Helper
 {
 	public class NativeMethods
 	{

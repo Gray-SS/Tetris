@@ -1,4 +1,4 @@
-﻿namespace Tetris
+﻿namespace ConsoleEngine.Graphics
 {
     public class Viewport
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Tetris.Framework.Helper
+namespace ConsoleEngine.Helper
 {
 	public class ConsoleFont
 	{

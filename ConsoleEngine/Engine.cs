@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Tetris.Framework.Helper;
+using ConsoleEngine.Graphics;
+using ConsoleEngine.Helper;
 
-namespace Tetris
+namespace ConsoleEngine
 {
     public abstract class Engine
     {
@@ -15,7 +16,7 @@ namespace Tetris
             set => Console.Title = value;
         }
 
-        public Graphics Graphics { get; private set; }
+        public GraphicsDevice Graphics { get; private set; }
         public Viewport Viewport { get; private set; }
         public int ConsoleWidth { get; private set; }
         public int ConsoleHeight { get; private set; }
@@ -34,6 +35,7 @@ namespace Tetris
             this.ConsoleWidth = Console.WindowWidth;
             this.ConsoleHeight = Console.WindowHeight * 2;
             this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
+            this.Graphics = new GraphicsDevice(this);
 
             NativeMethods.SetConsoleMode(stdInputHandle, 0x0080);
 
@@ -49,7 +51,7 @@ namespace Tetris
             this.ConsoleHeight = bufferHeight;
 
             this.Viewport = new Viewport(0, 0, ConsoleWidth, ConsoleHeight);
-            this.Graphics = new Graphics(this);
+            this.Graphics = new GraphicsDevice(this);
             ConsoleFont.SetFont(stdOutputHandle, (short)fontWidth, (short)fontHeight);
         }
 
@@ -75,6 +77,22 @@ namespace Tetris
         public virtual void Update(float dt) { }
         public virtual void Draw() { }
 
+        public static void Wait(int miliseconds)
+        {
+            Task.Delay(miliseconds).Wait();
+        }
+
+        public static TResult Wait<TResult>(Task<TResult> task)
+        {
+            task.Wait();
+            return task.Result;
+        }
+
+        public static void WaitUntil(Func<bool> func)
+        {
+            do { Wait(10); }
+            while (!func.Invoke());
+        }
 
         private void Update()
         {

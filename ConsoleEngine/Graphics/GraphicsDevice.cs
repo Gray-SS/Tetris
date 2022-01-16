@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Tetris
+namespace ConsoleEngine.Graphics
 {
-    public class Graphics
+    public class GraphicsDevice
     {
         private Engine _engine;
         private Glyph[,] _map;
         private Buffer _buffer;
 
-        public Graphics(Engine engine)
+        public GraphicsDevice(Engine engine)
         {
             _engine = engine;
 

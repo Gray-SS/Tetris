@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tetris
+namespace ConsoleEngine.Graphics
 {
     public class Texture
     {

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 
-namespace Tetris
+namespace ConsoleEngine.Graphics
 {
     public class Buffer
     {

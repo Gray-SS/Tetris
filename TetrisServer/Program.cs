@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -22,10 +23,11 @@ namespace TetrisServer
             while (true)
             {
                 var result = await client.ReceiveAsync();
-                string cmd = Encoding.UTF8.GetString(result.Buffer);
-                Console.WriteLine(cmd);
+                string[] line = Encoding.UTF8.GetString(result.Buffer).Split();
+                string[] arguments = line.Skip(0).ToArray();
+                Console.WriteLine(line);
 
-                switch (cmd)
+                switch (line[0])
                 {
                     case "lb-get":
 
@@ -34,9 +36,9 @@ namespace TetrisServer
 
                         foreach(var d in data)
                         {
-                            var line = d.Split(';');
-                            string username = line[0];
-                            int score = Convert.ToInt32(line[1]);
+                            var dataLine = d.Split(';');
+                            string username = dataLine[0];
+                            int score = Convert.ToInt32(dataLine[1]);
 
                             list.Add(new KeyValuePair<string, int>(username, score));
                         }
@@ -45,6 +47,12 @@ namespace TetrisServer
                         byte[] buffer = Encoding.UTF8.GetBytes(json);
                         await client.SendAsync(buffer, buffer.Length, result.RemoteEndPoint);
 
+                        break;
+
+                    case "lb-append":
+                        var fs = File.OpenWrite(filename);
+                        byte[] _buffer = Encoding.UTF8.GetBytes($"{arguments[0]};{arguments[1]}");
+                        fs.Write(_buffer, 0, _buffer.Length);
                         break;
                 }
             }
