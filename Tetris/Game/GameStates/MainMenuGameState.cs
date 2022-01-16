@@ -50,10 +50,7 @@ namespace Tetris.Game.GameStates
                         GameStateManager.SetCurrentState<TetrisGameState>();
                         break;
                     case "Leaderboard":
-                        //_leaderboard = GetLeaderboards().GetAwaiter().GetResult();
-
-                        //_gameState = 3;
-
+                        GameStateManager.SetCurrentState<LeaderboardGameState>();
                         break;
                     case "Exit":
                         Process.GetCurrentProcess().Kill();

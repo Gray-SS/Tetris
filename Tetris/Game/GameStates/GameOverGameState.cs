@@ -59,14 +59,16 @@ namespace Tetris.Game.GameStates
 
         public override void Draw()
         {
-            Graphics.DrawText(ConsoleWidth / 2 - "Game Over !".Length / 2, 10, "Game Over !", CColor.Red, null);
-            Graphics.DrawText(ConsoleWidth / 2 - $"Score: {StaticValues.Score}".Length / 2, 6, $"Score: {StaticValues.Score}", CColor.Green, null);
-            Graphics.DrawText(ConsoleWidth / 2 - $"Highscore: {StaticValues.Configuration.Highscore}".Length / 2, 8, $"Highscore: {StaticValues.Configuration.Highscore}", CColor.Green, null);
+            int first_y = ConsoleHeight / 2 + (int)(_gameOverMenuTexts.Length * -0.5f);
+            Graphics.DrawText(ConsoleWidth / 2 - "Game Over !".Length / 2, first_y - 4, "Game Over !", CColor.Red, null);
+            Graphics.DrawText(ConsoleWidth / 2 - $"Score: {StaticValues.Score}".Length / 2, first_y - 8, $"Score: {StaticValues.Score}", CColor.Green, null);
+            Graphics.DrawText(ConsoleWidth / 2 - $"Highscore: {StaticValues.Configuration.Highscore}".Length / 2, first_y - 6, $"Highscore: {StaticValues.Configuration.Highscore}", CColor.Green, null);
+
 
             for (int i = 0; i < _gameOverMenuTexts.Length; i++)
             {
                 int x = ConsoleWidth / 2 - _gameOverMenuTexts[i].Length / 2;
-                int y = ConsoleHeight / 2 + (_gameOverMenuTexts.Length * i - _gameOverMenuTexts.Length / 2);
+                int y = first_y + i * 2;
                 Graphics.DrawText(x, y, _gameOverMenuTexts[i], CColor.White, null);
 
                 if (i == _currentSelection)

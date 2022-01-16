@@ -181,9 +181,9 @@ namespace Tetris.Game.GameStates
                 {
                     _gameGrid.SetData(i, j, (int)CColor.White);
                 }
-                Thread.Sleep(10);
+                Engine.Wait(10);
             }
-            Thread.Sleep(100);
+            Engine.Wait(100);
 
             StaticValues.Score = _score;
 

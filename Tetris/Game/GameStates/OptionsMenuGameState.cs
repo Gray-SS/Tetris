@@ -80,6 +80,9 @@ namespace Tetris.Game.GameStates
                             }
                             else if (key == Keys.Enter)
                             {
+                                if (username.Length > 5) username = username.Remove(5, username.Length - 5);
+                                StaticValues.Configuration.Username = username;
+
                                 StaticValues.Configuration.Update();
                                 Engine.Wait(150);
                                 break;
@@ -122,7 +125,7 @@ namespace Tetris.Game.GameStates
 
         public override void Draw()
         {
-            int first_y = ConsoleHeight / 2 + (int)(_optionsMenuTexts.Length * -0.5f);
+            int first_y = ConsoleHeight / 2 + (int)(_optionsMenuTexts.Length * - 0.5f);
             Graphics.DrawText(ConsoleWidth / 2 - "OPTIONS".Length / 2, first_y - 3, "OPTIONS", CColor.Green, null);
 
             for (int i = 0; i < _optionsMenuTexts.Length; i++)
@@ -141,6 +144,8 @@ namespace Tetris.Game.GameStates
 
                 int x = ConsoleWidth / 2 - text.Length / 2;
                 int y = first_y + i * 2;
+
+                if (text == "Back") y += 1;
 
                 Graphics.DrawText(x, y, text, CColor.White, null);
 
