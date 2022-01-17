@@ -52,78 +52,78 @@ namespace Tetris.Game.GameStates
             if (Keyboard.IsKeyDown(Keys.Enter) && _inputTimer >= GameOptions.MenuInputDelay)
             {
                 _inputTimer = 0f;
-                switch (_optionsMenuTexts[_currentSelection])
+                lock (this)
                 {
-                    case "Shadow":
-                        StaticValues.Configuration.IsShadowEnabled = !StaticValues.Configuration.IsShadowEnabled;
-                        StaticValues.Configuration.Update();
-                        break;
-                    case "Username":
-                        string username = string.Empty;
-                        Keys key;
+                    switch (_optionsMenuTexts[_currentSelection])
+                    {
+                        case "Shadow":
+                            StaticValues.Configuration.IsShadowEnabled = !StaticValues.Configuration.IsShadowEnabled;
+                            StaticValues.Configuration.Update();
+                            break;
+                        case "Username":
+                            string username = string.Empty;
+                            Keys key;
 
-                        StaticValues.Configuration.Username = username;
+                            StaticValues.Configuration.Username = username;
 
-                        do
-                        {
-                            key = Engine.Wait(GetKeyAsync());
-
-                            if (((int)key >= 'A') && ((int)key <= 'Z'))
+                            do
                             {
-                                username += key.ToString();
-                                StaticValues.Configuration.Username = username;
-                            }
-                            else if (key == Keys.Backspace && username.Length > 0)
-                            {
-                                username = username.Remove(username.Length - 1, 1);
-                                StaticValues.Configuration.Username = username;
-                            }
-                            else if (key == Keys.Enter)
-                            {
-                                if (username.Length > 5) username = username.Remove(5, username.Length - 5);
-                                StaticValues.Configuration.Username = username;
+                                key = Engine.Wait(GetKeyAsync());
 
-                                StaticValues.Configuration.Update();
-                                Engine.Wait(150);
-                                break;
+                                if (((int)key >= '0') && ((int)key <= 'Z') && username.Length < 12)
+                                {
+                                    username += ((char)((int)key));
+                                    StaticValues.Configuration.Username = username;
+                                }
+                                else if (key == Keys.Backspace && username.Length > 0)
+                                {
+                                    username = username.Remove(username.Length - 1, 1);
+                                    StaticValues.Configuration.Username = username;
+                                }
+                                else if (key == Keys.Enter)
+                                {
+                                    StaticValues.Configuration.Update();
+                                    Engine.Wait(150);
+                                    break;
+                                }
                             }
-                        }
-                        while (true);
-                        break;
+                            while (true);
+                            break;
 
-                    case "Move Left":
-                        StaticValues.Configuration.InGameMoveLeft = Keys.None;
-                        StaticValues.Configuration.InGameMoveLeft = Engine.Wait(GetKeyAsync());
-                        StaticValues.Configuration.Update();
-                        Engine.Wait(50);
-                        break;
-                    case "Move Right":
-                        StaticValues.Configuration.InGameMoveRight = Keys.None;
-                        StaticValues.Configuration.InGameMoveRight = Engine.Wait(GetKeyAsync());
-                        StaticValues.Configuration.Update();
-                        Engine.Wait(50);
-                        break;
-                    case "Move Down":
-                        StaticValues.Configuration.InGameMoveDown = Keys.None;
-                        StaticValues.Configuration.InGameMoveDown = Engine.Wait(GetKeyAsync());
-                        StaticValues.Configuration.Update();
-                        Engine.Wait(50);
-                        break;
-                    case "Rotate":
-                        StaticValues.Configuration.InGameRotation = Keys.None;
-                        StaticValues.Configuration.InGameRotation = Engine.Wait(GetKeyAsync());
-                        StaticValues.Configuration.Update();
-                        Engine.Wait(50);
-                        break;
-                    case "Restart":
-                        StaticValues.Configuration.InGameRestart = Keys.None;
-                        StaticValues.Configuration.InGameRestart = Engine.Wait(GetKeyAsync());
-                        StaticValues.Configuration.Update();
-                        Engine.Wait(50);
-                        break;
-                    case "Back":
-                        GameStateManager.SetCurrentState<MainMenuGameState>();
-                        break;
+                        case "Move Left":
+                            StaticValues.Configuration.InGameMoveLeft = Keys.None;
+                            StaticValues.Configuration.InGameMoveLeft = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
+                        case "Move Right":
+                            StaticValues.Configuration.InGameMoveRight = Keys.None;
+                            StaticValues.Configuration.InGameMoveRight = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
+                        case "Move Down":
+                            StaticValues.Configuration.InGameMoveDown = Keys.None;
+                            StaticValues.Configuration.InGameMoveDown = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
+                        case "Rotate":
+                            StaticValues.Configuration.InGameRotation = Keys.None;
+                            StaticValues.Configuration.InGameRotation = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
+                        case "Restart":
+                            StaticValues.Configuration.InGameRestart = Keys.None;
+                            StaticValues.Configuration.InGameRestart = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
+                        case "Back":
+                            GameStateManager.SetCurrentState<MainMenuGameState>();
+                            break;
+                    }
                 }
             }
         }

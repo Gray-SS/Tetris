@@ -36,7 +36,9 @@ namespace Tetris.Game
 
         private Block Randomize()
         {
-            return _blocks[random.Next(_blocks.Length)];
+            var block = _blocks[random.Next(_blocks.Length)];
+            block.Reset();
+            return block;
         }
     }
 }

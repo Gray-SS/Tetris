@@ -82,6 +82,12 @@ namespace ConsoleEngine
             Task.Delay(miliseconds).Wait();
         }
 
+        public static void Wait(Task task)
+        {
+            task.Wait();
+            return;
+        }
+
         public static TResult Wait<TResult>(Task<TResult> task)
         {
             task.Wait();

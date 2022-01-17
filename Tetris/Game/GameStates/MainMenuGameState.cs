@@ -14,6 +14,10 @@ namespace Tetris.Game.GameStates
 
         public MainMenuGameState(Engine engine) : base(engine) { }
 
+        public override void OnStateCalled()
+        {
+        }
+
         public override void Load()
         {
             _gameMenuTexts = new string[]

@@ -1,7 +1,9 @@
 ﻿using ConsoleEngine;
 using ConsoleEngine.Graphics;
 using ConsoleEngine.Inputs;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tetris.Game.GameStates
 {
@@ -14,6 +16,8 @@ namespace Tetris.Game.GameStates
         private GameGrid _gameGrid;
         private Block currentBlock;
         private BlockQueue _blockQueue;
+
+        private int _tick;
 
         private float _timer;
         private float _delaySubTimer;
@@ -55,7 +59,8 @@ namespace Tetris.Game.GameStates
 
             if (_delaySubTimer >= GameOptions.InGameBlockFallSpeedIncrementDelay)
             {
-                _delay *= GameOptions.InGameBlockFallSpeedModifier;
+                _tick += 1;
+                _delay = GameOptions.InGameBlockFallStartSpeedDelay * MathF.Pow(GameOptions.InGameBlockFallSpeedModifier, _tick);
                 _delaySubTimer = 0f;
             }
 
@@ -69,7 +74,7 @@ namespace Tetris.Game.GameStates
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameRestart) && _inputTimer >= GameOptions.InGameInputDelay * 5f) GameOver();
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveRight) && _inputTimer >= GameOptions.InGameInputDelay) { _inputTimer = 0f; MoveRight(currentBlock); }
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveLeft) && _inputTimer >= GameOptions.InGameInputDelay) { _inputTimer = 0f; MoveLeft(currentBlock); }
-            if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveDown) && _inputTimer >= GameOptions.InGameInputDelay)
+            if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveDown) && _inputTimer >= GameOptions.InGameInputDelay * 0.35f)
             {
                 _inputTimer = 0f;
                 _score += 1;
@@ -91,7 +96,7 @@ namespace Tetris.Game.GameStates
 
             Graphics.DrawText(_tetrisViewport.Right + 5, 6, $"Score: {_score}", CColor.Yellow, null);
             Graphics.DrawText(_tetrisViewport.Right + 5, 8, "Next Block:", CColor.Magenta, null);
-            Graphics.DrawText(ConsoleWidth - 10, 2, $"Delay: {_delay}", CColor.Red, null);
+            Graphics.DrawText(ConsoleWidth - 15, 2, $"Delay: {_delay}", CColor.Red, null);
 
             DrawBlock(_blockQueue.NextBlock, new Vector2(_tetrisViewport.Right + 11 - _blockQueue.NextBlock.GetWidth() / 2, 10), (CColor)_blockQueue.NextBlock.Id);
         }
@@ -164,7 +169,10 @@ namespace Tetris.Game.GameStates
             }
 
             _score += 10;
-            _score += 100 * _gameGrid.ClearFullRows();
+
+            int c = _gameGrid.ClearFullRows();
+            int bonusRowCleared = (int)(100 * c + 100 * ((c - 1) * 0.25f + 0.25f));
+            if (bonusRowCleared > 0) _score += bonusRowCleared;
 
             if (!_gameGrid.IsRowEmpty(1) && !_gameGrid.IsRowEmpty(2))
             {
@@ -175,13 +183,16 @@ namespace Tetris.Game.GameStates
         private void GameOver()
         {
             _gameOver = true;
+
+            Task.Run(() => SoundMixer.PlayGameOverSound());
+
             for (int j = _gameGrid.Height - 1; j >= 0; j--)
             {
                 for (int i = 0; i < _gameGrid.Width; i++)
                 {
                     _gameGrid.SetData(i, j, (int)CColor.White);
                 }
-                Engine.Wait(10);
+                Engine.Wait(50);
             }
             Engine.Wait(100);
 

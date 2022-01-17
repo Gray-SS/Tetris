@@ -8,8 +8,6 @@ namespace Tetris.Game.GameStates
 {
     public class LeaderboardGameState : GameState
     {
-        private List<Player> _leaderboards = new();
-
         public LeaderboardGameState(Engine engine) : base(engine) { }
 
         public async override void OnStateCalled()
@@ -29,8 +27,6 @@ namespace Tetris.Game.GameStates
                 new("Snico", 350),
             };
             */
-
-            _leaderboards = await StaticValues.GetLeaderboards();
         }
 
         public override void Update(float dt)
@@ -40,7 +36,7 @@ namespace Tetris.Game.GameStates
 
         public override void Draw()
         {
-            if (_leaderboards == null)
+            if (StaticValues.Leaderboard == null)
                 return;
 
             int start_y = 6;
@@ -48,7 +44,7 @@ namespace Tetris.Game.GameStates
             Graphics.DrawText(ConsoleWidth / 2 - "LEADERBOARD".Length / 2, start_y - 3, "LEADERBOARD", CColor.Cyan, null);
 
             int i = 0;
-            foreach(var values in _leaderboards.OrderByDescending(x => x.Highscore))
+            foreach(var values in StaticValues.Leaderboard.OrderByDescending(x => x.Highscore).Take(10))
             {
                 var rankColor = i switch
                 {
@@ -59,7 +55,7 @@ namespace Tetris.Game.GameStates
                 };
                 Graphics.DrawText(5, start_y + 2 * i, (i + 1).ToString(), rankColor, null);
                 Graphics.DrawText(8, start_y + 2 * i, values.Username, CColor.White, null);
-                Graphics.DrawText(ConsoleWidth - 8 - _leaderboards.Max(x => x.Highscore).ToString().Length, start_y + 2 * i, values.Highscore.ToString(), CColor.White, null);
+                Graphics.DrawText(ConsoleWidth - 8 - StaticValues.Leaderboard.Max(x => x.Highscore).ToString().Length, start_y + 2 * i, values.Highscore.ToString(), CColor.White, null);
                 i++;
             }
 

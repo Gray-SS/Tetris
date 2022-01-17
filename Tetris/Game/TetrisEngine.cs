@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -19,7 +20,11 @@ namespace Tetris.Game
 
         public override void Load()
         {
+            if (!Directory.Exists($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Tetris"))
+                Directory.CreateDirectory($"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Tetris");
+
             StaticValues.Initialize();
+            SoundMixer.Start();
 
             if (StaticValues.Configuration.FirstExecute)
             {
@@ -51,7 +56,7 @@ namespace Tetris.Game
         public override void Draw()
         {
             Graphics.Clear(CColor.Black);
-            Graphics.DrawText(ConsoleWidth - 10, 1, $"FPS: {FPS}", CColor.Red, null);
+            Graphics.DrawText(ConsoleWidth - 15, 1, $"FPS: {FPS}", CColor.Red, null);
 
             GameStateManager.Draw();
         }
@@ -62,8 +67,8 @@ namespace Tetris.Game
             {
                 while (true)
                 {
-                    Thread.Sleep(5000);
                     StaticValues.UpdateData();
+                    Thread.Sleep(5000);
                 }
             });
             thread.Start();

@@ -5,7 +5,7 @@ namespace Tetris.Game.Configurations
 {
     public class UserConfiguration : BaseConfiguration
     {
-        public override string Filename => "configuration.xml";
+        public override string Filename => $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Tetris\\configuration.xml";
 
         public bool FirstExecute { get; set; }
         public string Username { get; set; }
