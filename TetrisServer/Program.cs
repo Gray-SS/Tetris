@@ -16,7 +16,7 @@ namespace TetrisServer
         {
             string filename = "lb.csv";
 
-            if (!File.Exists(filename)) File.Create(filename);
+            if (!File.Exists(filename)) File.Create(filename).Close();
 
             UdpClient client = new(new IPEndPoint(IPAddress.Any, 9981));
 
@@ -24,23 +24,22 @@ namespace TetrisServer
             {
                 var result = await client.ReceiveAsync();
                 string[] line = Encoding.UTF8.GetString(result.Buffer).Split();
-                string[] arguments = line.Skip(0).ToArray();
-                Console.WriteLine(line);
+                string[] arguments = line.Skip(1).ToArray();
 
                 switch (line[0])
                 {
                     case "lb-get":
-
-                        var list = new List<KeyValuePair<string, int>>();
+                        var list = new List<Player>();
                         string[] data = File.ReadAllLines(filename);
 
                         foreach(var d in data)
                         {
                             var dataLine = d.Split(';');
-                            string username = dataLine[0];
-                            int score = Convert.ToInt32(dataLine[1]);
+                            int id = Convert.ToInt32(dataLine[0]);
+                            string username = dataLine[1];
+                            int highscore = Convert.ToInt32(dataLine[2]);
 
-                            list.Add(new KeyValuePair<string, int>(username, score));
+                            list.Add(new Player() { Id = id, Username = username, Highscore = highscore });
                         }
 
                         string json = JsonConvert.SerializeObject(list);
@@ -50,9 +49,38 @@ namespace TetrisServer
                         break;
 
                     case "lb-append":
-                        var fs = File.OpenWrite(filename);
-                        byte[] _buffer = Encoding.UTF8.GetBytes($"{arguments[0]};{arguments[1]}");
-                        fs.Write(_buffer, 0, _buffer.Length);
+                        List<string> allTextLines = File.ReadAllLines(filename).ToList();
+
+                        int c = 0;
+                        for (int i = 0; i< allTextLines.Count; i++)
+                        {
+                            string[] splitedLines = allTextLines[i].Split(';');
+                            if (arguments[0] == splitedLines[0])
+                            {
+                                c++;
+                                allTextLines[i] = $"{arguments[0]};{arguments[1]};{arguments[2]}";
+                            }
+                        }
+                        if (c == 0)
+                        {
+                            string append_line = $"{arguments[0]};{arguments[1]};{arguments[2]}";
+                            allTextLines.Add(append_line);
+                        }
+
+                        File.Delete(filename);
+
+                        Console.WriteLine();
+                        var writer = new StreamWriter(File.Create(filename));
+                        for (int i = 0; i < allTextLines.Count; i++)
+                        {
+                            Console.WriteLine(allTextLines[i]);
+                            writer.WriteLine(allTextLines[i]);
+                        }
+
+                        writer.Flush();
+                        writer.Close();
+                        writer.Dispose();
+
                         break;
                 }
             }

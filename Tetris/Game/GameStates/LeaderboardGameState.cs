@@ -8,12 +8,13 @@ namespace Tetris.Game.GameStates
 {
     public class LeaderboardGameState : GameState
     {
-        private List<KeyValuePair<string, int>> _leaderboards;
+        private List<Player> _leaderboards = new();
 
         public LeaderboardGameState(Engine engine) : base(engine) { }
 
-        public override void OnStateCalled()
+        public async override void OnStateCalled()
         {
+            /*
             _leaderboards = new List<KeyValuePair<string, int>>()
             {
                 new("Sasha", 1150),
@@ -26,9 +27,10 @@ namespace Tetris.Game.GameStates
                 new("Snico", 350),
                 new("Snico", 350),
                 new("Snico", 350),
-
             };
-            //Engine.Wait(StaticValues.GetLeaderboards());
+            */
+
+            _leaderboards = await StaticValues.GetLeaderboards();
         }
 
         public override void Update(float dt)
@@ -38,12 +40,15 @@ namespace Tetris.Game.GameStates
 
         public override void Draw()
         {
+            if (_leaderboards == null)
+                return;
+
             int start_y = 6;
 
             Graphics.DrawText(ConsoleWidth / 2 - "LEADERBOARD".Length / 2, start_y - 3, "LEADERBOARD", CColor.Cyan, null);
 
             int i = 0;
-            foreach(var values in _leaderboards.OrderByDescending(x => x.Value))
+            foreach(var values in _leaderboards.OrderByDescending(x => x.Highscore))
             {
                 var rankColor = i switch
                 {
@@ -53,8 +58,8 @@ namespace Tetris.Game.GameStates
                     _ => CColor.White,
                 };
                 Graphics.DrawText(5, start_y + 2 * i, (i + 1).ToString(), rankColor, null);
-                Graphics.DrawText(8, start_y + 2 * i, values.Key, CColor.White, null);
-                Graphics.DrawText(ConsoleWidth - 8 - _leaderboards.Max(x => x.Value).ToString().Length, start_y + 2 * i, values.Value.ToString(), CColor.White, null);
+                Graphics.DrawText(8, start_y + 2 * i, values.Username, CColor.White, null);
+                Graphics.DrawText(ConsoleWidth - 8 - _leaderboards.Max(x => x.Highscore).ToString().Length, start_y + 2 * i, values.Highscore.ToString(), CColor.White, null);
                 i++;
             }
 

@@ -31,6 +31,8 @@ namespace Tetris.Game
                 StaticValues.Configuration.Username = username;
             }
 
+            HighscoreLoopSend();
+
             GameStateManager.AppendState(new TetrisGameState(this));
             GameStateManager.AppendState(new OptionsMenuGameState(this));
             GameStateManager.AppendState(new GameOverGameState(this));
@@ -52,6 +54,19 @@ namespace Tetris.Game
             Graphics.DrawText(ConsoleWidth - 10, 1, $"FPS: {FPS}", CColor.Red, null);
 
             GameStateManager.Draw();
+        }
+
+        private void HighscoreLoopSend()
+        {
+            Thread thread = new Thread(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(5000);
+                    StaticValues.UpdateData();
+                }
+            });
+            thread.Start();
         }
     }
 }

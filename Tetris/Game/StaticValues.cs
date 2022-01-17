@@ -19,24 +19,39 @@ namespace Tetris.Game
             Configuration = BaseConfiguration.Load<UserConfiguration>();
         }
 
-        public static async Task<List<KeyValuePair<string, int>>> GetLeaderboards()
+        public static void UpdateData()
         {
             try
             {
-                string ip = "192.168.1.16";//"10.153.116.73";
-                UdpClient.Connect(ip, 9981);
+                string ip = "10.153.116.73";
+                //UdpClient.Connect(ip, 9981);
+
+                byte[] buffer = Encoding.UTF8.GetBytes($"lb-append {Configuration.Id} {Configuration.Username} {Configuration.Highscore}");
+                UdpClient.Send(buffer, buffer.Length, ip, 9981);
+
+                //UdpClient.Close();
+            }
+            catch { }
+        }
+
+        public static async Task<List<Player>> GetLeaderboards()
+        {
+            try
+            {
+                string ip = "10.153.116.73";
+                //UdpClient.Connect(ip, 9981);
 
                 byte[] buffer = Encoding.UTF8.GetBytes("lb-get");
-                UdpClient.Send(buffer, buffer.Length);
+                UdpClient.Send(buffer, buffer.Length, ip, 9981);
 
                 var result = await UdpClient.ReceiveAsync();
                 string jsonResp = Encoding.UTF8.GetString(result.Buffer);
 
-                UdpClient.Close();
+                //UdpClient.Close();
 
-                return JsonConvert.DeserializeObject<List<KeyValuePair<string, int>>>(jsonResp);
+                return JsonConvert.DeserializeObject<List<Player>>(jsonResp);
             }
-            catch { return new List<KeyValuePair<string, int>>(); }
+            catch { return new List<Player>(); }
         }
     }
 }

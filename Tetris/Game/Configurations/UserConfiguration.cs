@@ -1,4 +1,5 @@
 ﻿using ConsoleEngine.Inputs;
+using System;
 
 namespace Tetris.Game.Configurations
 {
@@ -8,6 +9,7 @@ namespace Tetris.Game.Configurations
 
         public bool FirstExecute { get; set; }
         public string Username { get; set; }
+        public int Id { get; set; }
         public int Highscore { get; set; }
 
         public Keys InGameRotation { get; set; } = Keys.Up;
@@ -26,6 +28,12 @@ namespace Tetris.Game.Configurations
             this.FirstExecute = true;
             this.Username = "None";
             this.Highscore = 0;
+
+            Random random = new();
+            string id = string.Empty;
+            for (int i = 0; i < 5; i++) id += random.Next(10);
+
+            this.Id = Convert.ToInt32(id);
         }
     }
 }

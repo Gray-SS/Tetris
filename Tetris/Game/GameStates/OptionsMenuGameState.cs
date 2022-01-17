@@ -95,26 +95,31 @@ namespace Tetris.Game.GameStates
                         StaticValues.Configuration.InGameMoveLeft = Keys.None;
                         StaticValues.Configuration.InGameMoveLeft = Engine.Wait(GetKeyAsync());
                         StaticValues.Configuration.Update();
+                        Engine.Wait(50);
                         break;
                     case "Move Right":
                         StaticValues.Configuration.InGameMoveRight = Keys.None;
                         StaticValues.Configuration.InGameMoveRight = Engine.Wait(GetKeyAsync());
                         StaticValues.Configuration.Update();
+                        Engine.Wait(50);
                         break;
                     case "Move Down":
                         StaticValues.Configuration.InGameMoveDown = Keys.None;
                         StaticValues.Configuration.InGameMoveDown = Engine.Wait(GetKeyAsync());
                         StaticValues.Configuration.Update();
+                        Engine.Wait(50);
                         break;
                     case "Rotate":
                         StaticValues.Configuration.InGameRotation = Keys.None;
                         StaticValues.Configuration.InGameRotation = Engine.Wait(GetKeyAsync());
                         StaticValues.Configuration.Update();
+                        Engine.Wait(50);
                         break;
                     case "Restart":
                         StaticValues.Configuration.InGameRestart = Keys.None;
                         StaticValues.Configuration.InGameRestart = Engine.Wait(GetKeyAsync());
                         StaticValues.Configuration.Update();
+                        Engine.Wait(50);
                         break;
                     case "Back":
                         GameStateManager.SetCurrentState<MainMenuGameState>();
