@@ -39,18 +39,21 @@ namespace Tetris.Game.GameStates
 
             if (Keyboard.IsKeyDown(StaticValues.Configuration.MenuUpKey) && _inputTimer >= GameOptions.MenuInputDelay)
             {
+                Task.Run(() => StaticValues.MenuSelectSound.Play(false));
                 _inputTimer = 0f;
                 if (_currentSelection == 0) _currentSelection = _optionsMenuTexts.Length - 1;
                 else _currentSelection -= 1;
             }
             if (Keyboard.IsKeyDown(StaticValues.Configuration.MenuDownKey) && _inputTimer >= GameOptions.MenuInputDelay)
             {
+                Task.Run(() => StaticValues.MenuSelectSound.Play(false));
                 _inputTimer = 0f;
                 _currentSelection = (_currentSelection + 1) % _optionsMenuTexts.Length;
             }
 
             if (Keyboard.IsKeyDown(Keys.Enter) && _inputTimer >= GameOptions.MenuInputDelay)
             {
+                Task.Run(() => StaticValues.MenuClickSound.Play(false));
                 _inputTimer = 0f;
                 lock (this)
                 {

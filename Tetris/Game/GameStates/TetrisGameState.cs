@@ -108,6 +108,7 @@ namespace Tetris.Game.GameStates
             _inputTimer = 0f;
 
             _score = 0;
+            _tick = 0;
             _delay = GameOptions.InGameBlockFallStartSpeedDelay;
 
             _gameGrid.Clear();
@@ -169,8 +170,10 @@ namespace Tetris.Game.GameStates
             }
 
             _score += 10;
+            Task.Run(() => StaticValues.BlockPlacedSound.Play(false));
 
             int c = _gameGrid.ClearFullRows();
+            if (c > 0) Task.Run(() => StaticValues.ExplosionSound.Play(false));
             int bonusRowCleared = (int)(100 * c + 100 * ((c - 1) * 0.25f + 0.25f));
             if (bonusRowCleared > 0) _score += bonusRowCleared;
 

@@ -23,9 +23,13 @@ namespace Tetris.Game
         public static readonly SoundPlayer MainTroika = new(@"Audio\main_troika.wav");
         public static readonly SoundPlayer MainGameOver = new(@"Audio\main_game_over.wav");
         public static readonly SoundPlayer TitleTheme = new(@"Audio\title_theme.wav");
+        public static readonly SoundPlayer ExplosionSound = new(@"Audio\explosion.wav");
+        public static readonly SoundPlayer MenuSelectSound = new(@"Audio\hitHurt.wav");
+        public static readonly SoundPlayer MenuClickSound = new(@"Audio\menu_button_click.wav");
+        public static readonly SoundPlayer BlockPlacedSound = new(@"Audio\block_placed.wav");
 
 
-        private static readonly string _ip = "192.168.1.16";//"10.153.116.73";
+        private static readonly string ip = "192.168.1.16";//"10.153.116.73";
 
         public static void Initialize()
         {
@@ -39,7 +43,7 @@ namespace Tetris.Game
             try
             {
                 byte[] buffer = Encoding.UTF8.GetBytes($"lb-append {Configuration.Id} {Configuration.Username} {Configuration.Highscore}");
-                UdpClient.Send(buffer, buffer.Length, _ip, 9981);
+                UdpClient.Send(buffer, buffer.Length, ip, 9981);
 
                 Thread.Sleep(50);
 
@@ -56,7 +60,7 @@ namespace Tetris.Game
             try
             {
                 byte[] buffer = Encoding.UTF8.GetBytes("lb-get");
-                UdpClient.Send(buffer, buffer.Length, _ip, 9981);
+                UdpClient.Send(buffer, buffer.Length, ip, 9981);
 
                 var result = await UdpClient.ReceiveAsync();
                 string jsonResp = Encoding.UTF8.GetString(result.Buffer);
