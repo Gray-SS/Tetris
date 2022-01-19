@@ -28,6 +28,7 @@ namespace Tetris.Game.GameStates
                 "Move Right",
                 "Move Down",
                 "Rotate",
+                "Pause",
                 "Restart",
                 "Back"
             };
@@ -117,6 +118,12 @@ namespace Tetris.Game.GameStates
                             StaticValues.Configuration.Update();
                             Engine.Wait(50);
                             break;
+                        case "Pause":
+                            StaticValues.Configuration.InGamePause = Keys.None;
+                            StaticValues.Configuration.InGamePause = Engine.Wait(GetKeyAsync());
+                            StaticValues.Configuration.Update();
+                            Engine.Wait(50);
+                            break;
                         case "Restart":
                             StaticValues.Configuration.InGameRestart = Keys.None;
                             StaticValues.Configuration.InGameRestart = Engine.Wait(GetKeyAsync());
@@ -147,6 +154,7 @@ namespace Tetris.Game.GameStates
                     case "Move Right": text += $" [{StaticValues.Configuration.InGameMoveRight}]"; break;
                     case "Move Down": text += $" [{StaticValues.Configuration.InGameMoveDown}]"; break;
                     case "Rotate": text += $" [{StaticValues.Configuration.InGameRotation}]"; break;
+                    case "Pause": text += $" [{StaticValues.Configuration.InGamePause}]"; break;
                     case "Restart": text += $" [{StaticValues.Configuration.InGameRestart}]"; break;
                 }
 

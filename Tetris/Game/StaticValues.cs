@@ -28,8 +28,7 @@ namespace Tetris.Game
         public static readonly SoundPlayer MenuClickSound = new(@"Audio\menu_button_click.wav");
         public static readonly SoundPlayer BlockPlacedSound = new(@"Audio\block_placed.wav");
 
-
-        private static readonly string ip = "192.168.1.16";//"10.153.116.73";
+        private static readonly string ip = "10.153.116.73";
 
         public static void Initialize()
         {

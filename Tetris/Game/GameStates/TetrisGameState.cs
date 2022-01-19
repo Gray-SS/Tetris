@@ -10,7 +10,9 @@ namespace Tetris.Game.GameStates
     public class TetrisGameState : GameState
     {
         private int _score = 0;
+        private int _moveDownCount;
         private bool _gameOver;
+        private bool _paused;
         private float _delay = 0f;
         private Rectangle _tetrisViewport;
         private GameGrid _gameGrid;
@@ -20,6 +22,7 @@ namespace Tetris.Game.GameStates
         private int _tick;
 
         private float _timer;
+        private float _moveDownTimer;
         private float _delaySubTimer;
         private float _inputTimer;
 
@@ -53,8 +56,18 @@ namespace Tetris.Game.GameStates
 
         public override void Update(float dt)
         {
-            _delaySubTimer += dt;
             _inputTimer += dt;
+            if (Keyboard.IsKeyDown(StaticValues.Configuration.InGamePause) && _inputTimer >= GameOptions.InGameInputDelay)
+            {
+                _inputTimer = 0f;
+                _paused = !_paused;
+            }
+
+            if (_paused)
+                return;
+
+            _moveDownTimer += dt;
+            _delaySubTimer += dt;
             _timer += dt;
 
             if (_delaySubTimer >= GameOptions.InGameBlockFallSpeedIncrementDelay)
@@ -71,6 +84,7 @@ namespace Tetris.Game.GameStates
                 MoveDown(currentBlock);
             }
 
+            if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameTeleportToShadow) && _inputTimer >= GameOptions.InGameInputDelay) { _inputTimer = 0f; TeleportToShadow(currentBlock); }
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameRestart) && _inputTimer >= GameOptions.InGameInputDelay * 5f) GameOver();
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveRight) && _inputTimer >= GameOptions.InGameInputDelay) { _inputTimer = 0f; MoveRight(currentBlock); }
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameMoveLeft) && _inputTimer >= GameOptions.InGameInputDelay) { _inputTimer = 0f; MoveLeft(currentBlock); }
@@ -78,8 +92,10 @@ namespace Tetris.Game.GameStates
             {
                 _inputTimer = 0f;
                 _score += 1;
+                _moveDownCount++;
                 MoveDown(currentBlock);
             }
+
             if (Keyboard.IsKeyDown(StaticValues.Configuration.InGameRotation) && _inputTimer >= GameOptions.InGameInputDelay * 1.5f) { _inputTimer = 0f; Rotate(currentBlock); }
         }
 
@@ -97,6 +113,7 @@ namespace Tetris.Game.GameStates
             Graphics.DrawText(_tetrisViewport.Right + 5, 6, $"Score: {_score}", CColor.Yellow, null);
             Graphics.DrawText(_tetrisViewport.Right + 5, 8, "Next Block:", CColor.Magenta, null);
             Graphics.DrawText(ConsoleWidth - 15, 2, $"Delay: {_delay}", CColor.Red, null);
+            if (_paused) Graphics.DrawText(_tetrisViewport.Right + 20, 6, "GAME PAUSED", CColor.Cyan, null);
 
             DrawBlock(_blockQueue.NextBlock, new Vector2(_tetrisViewport.Right + 11 - _blockQueue.NextBlock.GetWidth() / 2, 10), (CColor)_blockQueue.NextBlock.Id);
         }
@@ -123,6 +140,12 @@ namespace Tetris.Game.GameStates
 
             if (!BlockFits(block))
                 block.RotateCCW();
+        }
+
+        private void TeleportToShadow(Block block)
+        {
+            var position = GetShadowPos(block);
+            block.Move(position.X - block.Offset.X, position.Y - block.Offset.Y);
         }
 
         private void MoveDown(Block block)
@@ -231,14 +254,18 @@ namespace Tetris.Game.GameStates
             return true;
         }
 
-        private void DrawShadow(Block block)
+        private Vector2 GetShadowPos(Block block)
         {
             Vector2 pos = new(block.Offset.X, block.Offset.Y);
             while (BlockFits(block, pos))
                 pos.Y += 1;
             pos.Y -= 1;
+            return pos;
+        }
 
-            DrawBlock(block, pos, CColor.DarkGray);
+        private void DrawShadow(Block block)
+        {
+            DrawBlock(block, GetShadowPos(block), CColor.DarkGray);
         }
 
         private void DrawBlock(Block block)

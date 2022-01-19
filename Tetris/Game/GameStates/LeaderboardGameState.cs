@@ -10,7 +10,7 @@ namespace Tetris.Game.GameStates
     {
         public LeaderboardGameState(Engine engine) : base(engine) { }
 
-        public async override void OnStateCalled()
+        public override void OnStateCalled()
         {
             /*
             _leaderboards = new List<KeyValuePair<string, int>>()
@@ -27,6 +27,8 @@ namespace Tetris.Game.GameStates
                 new("Snico", 350),
             };
             */
+
+            StaticValues.UpdateData();
         }
 
         public override void Update(float dt)
