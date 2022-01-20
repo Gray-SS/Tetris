@@ -13,6 +13,7 @@ namespace Tetris.Game
         public static void AppendState<TState>(TState state) where TState : GameState
         {
             _instance._states.Add(state);
+            state.Initialize();
         }
 
         public static void SetCurrentState<TState>()

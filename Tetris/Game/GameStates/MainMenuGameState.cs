@@ -23,9 +23,10 @@ namespace Tetris.Game.GameStates
         {
             _gameMenuTexts = new string[]
             {
-                "Start",
-                "Options",
+                "Solo",
+                "Versus",
                 "Leaderboard",
+                "Options",
                 "Exit"
             };
         }
@@ -54,8 +55,11 @@ namespace Tetris.Game.GameStates
                 _inputTimer = 0f;
                 switch (_gameMenuTexts[_currentSelection])
                 {
-                    case "Start":
+                    case "Solo":
                         GameStateManager.SetCurrentState<TetrisGameState>();
+                        break;
+                    case "Versus":
+                        GameStateManager.SetCurrentState<VersusTetrisGameState>();
                         break;
                     case "Leaderboard":
                         GameStateManager.SetCurrentState<LeaderboardGameState>();

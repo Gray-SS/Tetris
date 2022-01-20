@@ -17,6 +17,7 @@ namespace Tetris.Game
         }
 
         public virtual void OnStateCalled() { }
+        public virtual void Initialize() { }
         public virtual void Load() { }
         public virtual void Update(float dt) { }
         public virtual void Draw() { }

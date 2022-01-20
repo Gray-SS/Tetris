@@ -18,7 +18,6 @@ namespace Tetris.Game.Configurations
         public Keys InGameMoveRight { get; set; } = Keys.Right;
         public Keys InGameRestart { get; set; } = Keys.R;
         public Keys InGamePause { get; set; } = Keys.Space;
-        public Keys InGameTeleportToShadow { get; set; } = Keys.A;
 
         public Keys MenuUpKey { get; set; } = Keys.Up;
         public Keys MenuDownKey { get; set; } = Keys.Down;

@@ -39,6 +39,7 @@ namespace Tetris.Game
             HighscoreLoopSend();
 
             GameStateManager.AppendState(new TetrisGameState(this));
+            GameStateManager.AppendState(new VersusTetrisGameState(this));
             GameStateManager.AppendState(new OptionsMenuGameState(this));
             GameStateManager.AppendState(new GameOverGameState(this));
             GameStateManager.AppendState(new LeaderboardGameState(this));
